@@ -1,0 +1,1060 @@
+import java.util.List;
+import java.util.LinkedList;
+parser code  {:
+private ManejadorErrores manejadorErrores;
+public void setManejadorErrores(ManejadorErrores manejadorEr
+rores) {
+this.manejadorErrores = manejadorErrores;
+}
+@Override
+public void report_error(String message, Object info) {
+Token error = (Token) info;
+StringBuilder msjError = new 
+StringBuilder(TipoError.ERROR_SINTAXIS.getM
+ensaje());
+msjError.append(", encontrado cerca de: ");
+msjError.append(error.value.toString());
+manejadorErrores.notificarErrorGrave(msjError.toString(), error.linea);
+}
+@Override
+public void report_fatal_error(String m
+essage, Object info) {
+done_parsing();
+report_error(message, info);
+}
+@Override
+public void syntax_error(Symbol cur_token) {
+report_error(null, cur_token);
+}
+@Override
+public void unrecovered_syntax_error(S
+ymbol cur_token) {
+report_fatal_error(null, cur_token);
+}
+:};
+/* -------------------------------------------------------------------------
+-*//* Terminales  */
+/* 
+------------------------------------------------
+--------------------------
+*/
+/* Palabras Reservadas 
+-
+Programa */
+terminal INICIOPROGRAMA;
+terminal FINPROGRAMA;
+terminal PRINCIPAL;
+terminal ENTRADA;
+terminal IM
+PRIME;
+/* Palabras Reservadas 
+-
+Subrutinas */
+terminal PROCEDIMIENTO;
+terminal REGRESAR;
+/* Palabras Reservadas 
+-
+Bloques de Instrucciones */
+terminal INICIO;
+terminal FIN;
+/* Palabras Reservadas 
+-
+Tipos de Da
+tos */
+terminal ENTERO;
+terminal TEXTO;
+terminal FLOTANTE;
+terminal BOOL;
+/* Palabras Reservadas 
+-
+Sentencias Selectivas */
+terminal SI;
+terminal ENTONCES;
+terminal SINO;
+terminal ENCASO;
+terminal OPC;
+terminal OTRO;
+/* Palabras Reservadas 
+-
+Sentencias Repetitivas */
+terminal MIENTRAS;
+terminal HACER;
+terminal REPETIR;
+terminal HASTA;
+terminal PARA;
+
+/* Palabras Reservadas 
+-
+Literal Cadena para Nueva Linea */
+terminal String NL;
+/* Palabras Reservadas 
+-
+Literales Booleanas */
+terminal CIERTO;
+terminal FALSO;
+/* Simbolos */
+terminal PARENI;
+terminal PAREND;
+terminal LLAV
+EI;
+terminal LLAVED;
+terminal CORCHI;
+terminal CORCHD;
+terminal COMA;
+terminal DOSPUNTOS;
+terminal PUNTOCOMA;
+/* Operadores Aritmeticos */
+terminal IGU;
+terminal MASMAS;
+terminal 
+MENMEN;
+terminal MAS;
+terminal MEN;
+terminal MUL;
+terminal DIV;
+terminal MOD;
+terminal MASIGU;
+terminal MENIGU;
+terminal MULIGU;
+terminal DIVIGU;
+terminal MODIGU;
+/* Opera
+dores Relacionales */
+terminal MAYQ;
+terminal MENQ;
+terminal NO;
+terminal IGUIGU;
+terminal MAYQIGU;
+terminal MENQIGU;
+terminal NOIGU;
+terminal Y;
+terminal O;
+/* Operadores Cadenas
+*/
+terminal PUNTO;
+/* Identificadores */
+terminal String IDENTIFICADOR;
+/* Numeros */
+terminal Integer LITENTERO;
+terminal Float LITFLOTANTE;
+/* Texto */
+terminal String LITTEXTO;
+/* Fin de Linea
+*/
+terminal FINLINEA;
+/* Error */
+terminal ILEGAL;
+/* 
+---------------------------------------------
+-----------------------------
+*/
+/* No Terminales                                                                             
+*/
+/* 
+-
+--------------------------------------------
+-----------------------------
+*/
+/* Inicio de la Gramatica */
+non terminal Programa programa;
+/* Fin de Instruccion */
+non terminal fin_instruccion_nl;
+non terminal fin_instrucci
+on;
+/* Literales */
+non terminal Expresion literal;
+/* Tipos, Valores y Variables */
+non terminal Tipo tipo;
+non terminal Tipo tipos_basicos;
+non terminal Tipo tipo_arreglo;
+/* Declaracion de Variables Globale
+s */
+non terminal List<Declaracion> declaraciones_var_global_opc;
+non terminal List<Declaracion> declaraciones_var_global;
+non terminal List<Declaracion> declaracion_var_global;
+non terminal SentenciaDeclaraciones declaracio
+nes_var_basicos;
+non terminal Declaracion declaracion_var_basicos;
+non terminal SentenciaDeclaraciones declaraciones_var_arreglo;
+non terminal DeclaracionArreglo declaracion_var_arreglo;
+/* Arreglos */
+non terminal List
+<Expresion> dimensiones_arreglo;
+non terminal ExpresionArreglo exp_arreglo;
+
+non terminal ExpresionArreglo elementos_arreglo;
+non terminal Expresion elemento_arreglo;
+/* Declaracion de Metodo */
+non terminal List<Subruti
+na> declaraciones_subrutina_opc;
+non terminal List<Subrutina> declaraciones_subrutina;
+non terminal Subrutina declaracion_subrutina;
+non terminal Subrutina declaracion_tipo_subrutina;
+non terminal List<Declaracion> lista_par
+amatros_opc;
+non terminal List<Declaracion> lista_paramatros;
+non terminal Declaracion parametro;
+/* Bloques y Sentencias */
+non terminal Bloque bloque;
+non terminal Bloque bloque_sentencias_opc;
+non terminal Bl
+oque bloque_sentencias;
+non terminal Sentencia sentencia;
+non terminal SentenciaDeclaraciones sen_dec_var_local;
+non terminal SentenciaDeclaraciones dec_var_local;
+non terminal Sentencia sen_no_short_if;
+non terminal
+Sentencia sen_sin_subsen_final;
+non terminal Sentencia sen_expresion;
+non terminal Sentencia sen_exp;
+non terminal SentenciaIf sen_if_then;
+non terminal SentenciaIf sen_if_then_else;
+non terminal SentenciaIf sen_if_
+then_else_no_short_if;
+non terminal SentenciaSwitch sen_switch;
+non terminal List<SentenciaCase> bloque_switch;
+non terminal List<SentenciaCase> sen_grupos_bloque_switch;
+non terminal SentenciaCase sen_grupo_bloque_switch;
+non terminal List<Expresion> etiquetas_switch;
+non terminal Expresion etiqueta_switch;
+non terminal SentenciaWhile sen_while;
+non terminal SentenciaWhile sen_while_no_short_if;
+non terminal SentenciaDo sen_do;
+non terminal SentenciaFor sen_for;
+non terminal SentenciaFor sen_for_no_short_if;
+non terminal List<Sentencia> ini_for;
+non terminal List<Sentencia> sen_lista_expresiones;
+non terminal SentenciaReturn sen_return;
+/* Expresiones */
+non terminal Expresion primario;
+non terminal List<Expresion> lista_argumentos_opc;
+non terminal List<Expresion> lista_argumentos;
+non terminal ExpresionLlamadaSubrutina invocacion_metodo;
+non terminal S
+entenciaLectura invocacion_entrada;
+non terminal List<ExpresionVariable> variables_entrada;
+non terminal SentenciaEscritura invocacion_imprime;
+non terminal List<Expresion> variables_imprime;
+non terminal Expresion variable_
+imprime;
+non terminal ExpresionVariableArreglo acceso_arreglo;
+non terminal Expresion expresion_postfix;
+non terminal Expresion exp_postincremento;
+non terminal Expresion exp_postdecremento;
+non terminal Expresion ex
+presion_unaria;
+non terminal Expresion expresion_unaria_no_mas_menos;
+non terminal Expresion expresion_multiplicativa;
+non terminal Expresion expresion_aditiva;
+non terminal Expresion expresion_relacional;
+non termin
+al Expresion expresion_igualdad;
+non terminal Expresion expresion_condicional_and;
+non terminal Expresion expresion_condicional_or;
+non terminal Expresion expresion_asignacion;
+non terminal SentenciaAsignacion asignacion;
+non terminal ExpresionVariable lado_izquierdo;
+non terminal Operador operador_asignacion;
+non terminal Expresion expresion;
+non terminal Expresion expresion_constante;
+/* 
+---------------------------------------------
+-------
+----------------------
+*/
+/* Gramatica                                                                                 
+*/
+/* 
+-------------------------------------------------------------
+-------------
+*/
+start with programa;
+programa                      
+::=     IDENTIFICADOR:id INICIOPROGRAMA 
+fin_instruccion_nl declaraciones_var_global_opc:lstVarGlob 
+declaraciones_subrutina_opc:lstSub PRINCIPAL fin_instruccion_nl bloque:senPrin 
+FINPROGRAMA fin_instruccion
+{: RESUL
+T = new Programa(id, lstVarGlob, 
+lstSub, senPrin); :}
+|       error
+;
+fin_instruccion_nl              ::=     FINLINEA
+|       fin_instruccion_nl FINLINEA
+;
+fin_instruccion                 ::=
+|       fin_instruccion_nl
+
+
+literal                         ::=     LITENTERO:litEnt
+{: RESULT = new 
+ExpresionEntero(litEnt.intValue());
+RESULT.linea = ((Token) 
+CUP$AnalizadorSintactico$stack.peek()).linea; :}
+|       LITFLOTANTE:litFlot
+{: RESULT = new 
+ExpresionFlotante(litFlot.floatValue());
+RESULT.linea = ((Token) 
+CUP$AnalizadorSintactico$stack.peek()).linea; :}
+|       CIERTO
+{: RESULT = new ExpresionBooleano(true);
+RESULT.linea = ((Token) 
+CUP$AnalizadorSintactico$stack.peek()).linea; :}
+|       FALSO
+{: RESULT = new 
+ExpresionBooleano(false);
+RESULT.linea = ((Token) 
+CUP$AnalizadorSintactico$stack.peek()).linea; :}
+|       LITTEXTO:litTxt
+{: RESULT = new ExpresionTexto(litTxt);
+RESULT.linea = ((Token) 
+CUP$AnalizadorSintactico$stack.peek()).linea; :}
+;
+tipo                            ::=     tipos_basicos:tipo
+{: RESULT = tipo; :}
+|       tipo_arreglo:tipo
+{: RESULT = tipo; :}
+;
+tipos_basicos                   ::=     ENT
+ERO
+{: RESULT = TablaTipos.tipoEntero; :}
+|       FLOTANTE
+{: RESULT = TablaTipos.tipoFlotante; :}
+|       BOOL
+{: RESULT = TablaTipos.tipoBooleano; :}
+|       TEXTO
+{: RESULT = TablaTipos.tipoTexto; :}
+;
+tipo_arreglo      
+::=     CORCHI CORCHD tipos_basicos:tipo
+{: RESULT = 
+TablaTipos.tipoArreglo(tipo); :}
+|       CORCHI CORCHD tipo_arreglo:tipo
+{: R
+ESULT = 
+TablaTipos.tipoArreglo(tipo); :}
+
+;
+declaraciones_var_global_opc    ::=
+{: RESULT = new 
+LinkedList<Declaracion>(); :}
+|       declaraciones_var
+_global:lstVarGlob
+{: RESULT = lstVarGlob; :}
+;
+declaraciones_var_global        ::=     declaracion_var_global:varGlob
+{: RESULT = varGlob; :}
+|       declaraciones_var_global:lstVarGlob 
+declaracion_var_global:varGlob
+{: for (Declaracion d : varGlob)
+lstVarGlob.add(d);
+RESULT = lstVarGlob; :}
+;
+declaracion_var_global          ::=     tipos_basicos:tipo 
+declaraciones_var_basicos:lstDec fin_instruccion_nl
+{: for (Decla
+racion d : 
+lstDec.declaraciones) {
+d.tipo = tipo;
+d.revisarValorInicial();
+}
+RESULT = lstDec.declaraciones; :}
+|       tipo_arreglo:tipo 
+declaraciones_var_arreglo:lstDec fin_instruccion_nl
+{: for (Declaracion d : 
+lstDec.declaraciones)
+d.tipo = tipo;
+RESULT = lstDec.declaraciones; :}
+;
+declaraciones_var_basicos       ::=     declaracion_var_basicos:dec
+{: RESULT = new 
+SentenciaDeclaraciones(dec); :}
+|       declaraciones_var_basicos:lstDec COMA 
+declaracion_var_basicos:dec
+{: lstDec.agregarDeclaracion(dec);
+RESULT = lstDec; :}
+;
+declaracion_var_basicos         ::=     IDENTIFICADOR:id
+{: RESULT = new Declaracion(id);
+RESULT.line
+a = ((Token) 
+CUP$AnalizadorSintactico$stack.peek()).linea; :}
+
+|       IDENTIFICADOR:id IGU expresion:exp
+{: RESULT = new Declaracion(id, exp);
+RESULT.linea = exp.linea; :}
+;
+declaraciones_var_arreglo       ::=     declaracion_var_arreglo:dec
+{: RESULT = new 
+SentenciaDeclaraciones(dec); :}
+| 
+declaraciones_var_arreglo:lstDec COMA 
+declaracion_var_arreglo:dec
+{: lstDec.agregarDeclaracion(dec);
+RESULT = lstDec; :}
+;
+declaracion
+_var_arreglo         ::=     IDENTIFICADOR:id dimensiones_arreglo:dim
+{: RESULT = new DeclaracionArreglo(id, 
+dim.toArray(new Expresion[dim.size()]));
+RESULT.linea = ((Token)
+CUP$AnalizadorSintactico$stack.elementAt(CUP$AnalizadorSintactico$top
+-
+1)).linea; 
+:}
+|       IDENTIFICADOR:id IGU exp_arreglo:exp
+{: RESULT = new DeclaracionArreglo(id, 
+exp);
+RESULT.linea = exp.linea; :}
+;
+dimensiones_arreglo             ::=     CORCHI expresion:exp CORCHD
+{: RESULT = new LinkedList<Expresion>();
+RESULT.add(exp); :}
+|       dimensiones_arreglo:lstDim CORCHI 
+expresion:exp CORCHD
+{: lstDim.add(exp);
+RES
+ULT = lstDim; :}
+;
+exp_arreglo                     ::=     LLAVEI elementos_arreglo:elem LLAVED
+{: RESULT = elem; :}
+;
+elementos_arreglo              
+::=     elemento_arreglo:exp
+{: RESULT = new ExpresionArreglo(exp);
+RESULT.linea = exp.linea; :}
+|       elementos_arreglo:elem COMA 
+element
+o_arreglo:exp
+{: elem.agregarExpresion(exp);
+RESULT = elem; :}
+
+
+elemento_arreglo                ::=     expresion:exp
+{: RESULT = exp; :}
+|       exp_arreglo:exp
+{: RESULT = exp; :}
+;
+declaraciones_subrutina_opc     ::=
+{: RESULT = new LinkedList<Subrutina>(); 
+:}
+|       declaraciones_subrutina:lstSub
+{: RESULT = lstSub; :}
+;
+declaraciones_subrutina         
+::=     declaracion_subrutina:sub
+{: RESULT = new LinkedList<Subrutina>();
+RESULT.add(sub); :}
+|       declaraciones_subrutina:lstSub 
+declara
+cion_subrutina:sub
+{: lstSub.add(sub);
+RESULT = lstSub; :}
+;
+declaracion_subrutina           ::=     PROCEDIMIENTO 
+declaracion_tipo_subrutin
+a:decSub
+{: RESULT = decSub; :}
+;
+declaracion_tipo_subrutina      ::=     IDENTIFICADOR:id PARENI 
+lista_paramatros_opc:lstParam PAREND fin_instruccion_nl bloque:bl
+{: RESULT = new Subrutina(id, lstParam, 
+bl, TablaTipos.tipoVoid);
+RESULT.linea = ((Token) 
+CUP$AnalizadorSintactico$stack.elementAt(CUP$AnalizadorSintactico$top
+-
+5)).linea; 
+:}
+|       tipo:t IDENTIFICADOR:id PARENI 
+lista_paramatros_opc:lstParam PAREND fin_instruccion_nl INICIO 
+fin_instruccion_nl bloque_sentencias_opc:bl sen_return:sen FIN 
+fin_instruccion_nl
+{: bl.agregarSente
+ncia(sen);
+RESULT = new Subrutina(id, lstParam, 
+bl, t);
+RESULT.linea = ((Token) 
+CUP$AnalizadorSintactico$stack.elementAt(CUP$AnalizadorSintactico$top
+-
+10)).linea; :}
+
+lista_paramatros_opc            ::=
+{: RESULT = new 
+LinkedList<Declaracion>(); :}
+|       lista_paramatros:lstParam
+{: RESULT = lstParam; :}
+;
+lista_paramatros                ::=     parametro:param
+{: RESULT = new 
+LinkedList<Declaracion>();
+RESULT.add(p
+aram); :}
+|       lista_paramatros:lstParam COMA 
+parametro:param
+{: lstParam.add(param);
+RESULT = lstParam; :}
+;
+parametro                       ::=     tipo:t IDENTIFICADOR:id
+{: if (t instanceof TipoArreglo)
+RESULT = new 
+DeclaracionArreglo(id);
+else
+RESULT = new Declaracion(id);
+RESULT.tipo = t;
+RESULT.linea = ((Token) 
+CUP$AnalizadorSintactico$stack.pee
+k()).linea; :}
+;
+bloque                          ::=     INICIO fin_instruccion_nl 
+bloque_sentencias_opc:blqSent FIN fin_instruccion_nl
+{: RESULT = blqSent; :}
+;
+bloque_sentencias_opc           ::=
+{: RESULT = new Bloque(); :}
+|       bloque_sentencias:blqSent
+{: RESULT = blqSent; :}
+;
+bloque_sentencias               ::=     sentencia:sent
+{: RESULT = new Bloque(sent); :}
+|       bloque_sentencias:blqSent sentencia:sent
+{: blqSent.agregarSentencia(sent);
+RESULT = blqSent; :}
+
+sentencia                       ::=     sen_dec_var_local:lstDecVar
+{: RESULT = lstDecVar; :}
+|       sen_sin_subsen_final:sent
+{: RESULT = sent; :}
+|       sen_if_then:sent
+{: RESULT = sent; :}
+|       sen_if_then_else:sent
+{: RESULT = sent; :}
+|       sen_while:sent
+{: RESULT = sent
+; :}
+|       sen_for:sent
+{: RESULT = sent; :}
+|       error
+;
+sen_dec_var_local               ::=     dec_var_local:ls
+tDecVar 
+fin_instruccion_nl
+{: RESULT = lstDecVar; :}
+;
+dec_var_local                   ::=     tipos_basicos:tipo 
+declaraciones_var_basicos:lstDec
+{: for (Declaracion d : 
+lstDec.declaraciones) {
+d.tipo = tipo;
+d.revisarValorInicial();
+}
+RESULT = lstDec; :}
+|       tipo_arreglo:tipo 
+declaraciones_var_arreglo:lstDec
+{: for (Declaracion d : 
+lstDec.declaraciones)
+d.tipo = tipo;
+RESULT = lstDec; :}
+;
+sen_no_short_if                 ::=     sen_sin_subsen_final:sent
+{: RESULT = sent; :}
+|       sen_if_then_else_no_short_if:sent
+{: RESULT = sent; :}
+|       sen_while_no_short_if:sent
+{: RESULT = sent; :}
+|       sen_for_no_short_if:sent
+{: RESULT = sent; :}
+;
+sen_sin_subsen_final            ::=     bloque:bl
+{: RESUL
+T = bl; :}
+
+|       sen_expresion:sent
+{: RESULT = sent; :}
+|       sen_switch:sent
+{: RESULT = sent; :}
+|       sen_do:sent
+{: RESULT = sent; :}
+;
+sen_expresion                   ::=     sen_exp:sent fin_instruccion_nl
+{: R
+ESULT = sent; :}
+|       invocacion_entrada:sent 
+fin_instruccion_nl
+{: RESULT = sent; :}
+|       invocacion_imprime:sent 
+fin_instruccion_nl
+{: RESULT = sent; :}
+;
+sen_exp                         ::=     asignacion:sent
+{: RESULT = sent; :}
+|       exp_postincreme
+nto:exp
+{: RESULT = new SentenciaExpresion(exp); 
+:}
+|       exp_postdecremento:exp
+{: RESULT = new SentenciaExpresion(exp); 
+:}
+|       invocacion_metodo:exp
+{: RESULT = new SentenciaExpresion(exp); 
+:}
+;
+sen_if_then                     ::=     SI PARENI expresion:exp PAREND ENTONCES 
+fin_instrucc
+ion_nl sentencia:sentIf
+{: RESULT = new SentenciaIf(exp, 
+sentIf); :}
+;
+sen_if_then_else                ::=     SI PARENI expresion:exp PAREND ENTONCES 
+fin_instruccion_nl sen_no_short_
+if:sentIf SINO fin_instruccion_nl 
+sentencia:sentElse
+{: RESULT = new SentenciaIf(exp, sentIf, 
+sentElse); :}
+;
+sen_if_then_else_no_short_if    ::=     SI PARENI expresion:exp PAREND EN
+TONCES 
+fin_instruccion_nl sen_no_short_if:sentIf SINO fin_instruccion_nl 
+sen_no_short_if:sentElse
+
+{: RESULT = new SentenciaIf(exp, sentIf, 
+sentElse); :}
+;
+sen_switch                  
+::=     ENCASO PARENI expresion:exp PAREND 
+fin_instruccion_nl bloque_switch:lstCase
+{: RESULT = new SentenciaSwitch(exp, 
+lstCase); :}
+;
+bloque_switch                   ::=     IN
+ICIO fin_instruccion_nl 
+sen_grupos_bloque_switch:lstCase FIN fin_instruccion_nl
+{: RESULT = lstCase; :}
+|       INICIO fin_instruccion_nl FIN 
+fin_instruccion_nl
+{: RESULT = new 
+LinkedList<SentenciaCase>(); :}
+;
+sen_grupos_bloque_switch        ::=     sen_grupo_bloque_switch:senCase
+{: RESULT = new 
+LinkedList<SentenciaCase>();
+RESULT.add(senCase); :}
+|       sen_grupos_bloque_switch:lstCase 
+sen_grupo_bloque_switch:senCase
+{: lstCase.add(senCase);
+RESULT = lstCase; :}
+;
+sen_grupo_bloque_switch         ::=     etiquetas_switch:lstEtiq bloque:bl
+{: RESULT = new SentenciaCase(lstEtiq, 
+bl); :}
+;
+etiquetas_switch                ::=     etiqueta_switch:etiq
+{: RESULT = new LinkedList<Expresion>();
+RESULT.add(etiq); :}
+|       etiquetas_switch:lstEtiq 
+etiqueta_switch:etiq
+{: lstEtiq.add(etiq);
+RESULT = lstEtiq; :}
+;
+etiqueta_switch                 ::=  
+OPC expresion_constante:exp DOSPUNTOS
+{: RESULT = exp; :}
+|       OTRO DOSPUNTOS
+{: RESULT = new ExpresionDefault();
+
+RESULT.linea = ((Token) 
+CUP$AnalizadorSintactico$stack.peek()).linea; :}
+;
+sen_while                       ::=     MIENTRAS PARENI expresion:exp PAREND 
+HACER fin_instruccion_nl sentencia:sent
+{: RESULT = new SentenciaWhile(exp, 
+sent); :}
+;
+sen_while_no_short_if           ::=     MIENTRAS PARENI expresion:exp PAREND 
+HACER fin_instruccion_nl sen_no_short_if:sent
+{: RESULT = new SentenciaWhile(exp, 
+sent); :}
+;
+sen_do                          ::=     REPETIR fin_instruccion_nl 
+bloque_sentencias_opc:sent HASTA PARENI expresion:exp PAREND fin_instruccion_nl
+{: RESULT = new SentenciaDo(exp, sent); 
+:}
+;
+sen_for                         ::=     PARA PARENI ini_for:sentIni PUNTOCOMA 
+expresion:expParo PUNTOCOMA sen_lista_expresiones:sentAct PAREND 
+fin_ins
+truccion_nl sentencia:sent
+{: RESULT = new SentenciaFor(sentIni, 
+expParo, sentAct, sent); :}
+;
+sen_for_no_short_if             ::=     PARA PARENI ini_for:sentIni PUNTOCOMA 
+expresion:
+expParo PUNTOCOMA sen_lista_expresiones:sentAct PAREND 
+fin_instruccion_nl sen_no_short_if:sent
+{: RESULT = new SentenciaFor(sentIni, 
+expParo, sentAct, sent); :}
+;
+ini_for             
+::=     sen_lista_expresiones:lstSent
+{: RESULT = lstSent; :}
+|       dec_var_local:sent
+{: RESULT = new LinkedList<Sentencia>();
+RESULT.add(sent); :}
+;
+sen_lista_expresiones           ::=     sen_exp:sent
+{: RESULT = new LinkedList<Sentencia>();
+RESULT.add(sent); :}
+|       sen_lista_expresiones:lstSent COMA 
+sen_exp:sent
+
+
+{: lstSent.add(sent);
+RESULT = lstSent; :}
+;
+sen_return                      ::=     REGRESAR expresion:exp 
+fin_instruccion_nl
+{: RESULT = new SentenciaReturn(exp); :}
+;
+primario                 
+::=     literal:lit
+{: RESULT = lit; :}
+|
+PARENI expresion:exp PAREND
+{: RESULT = exp; :}
+|
+invocacion_me
+todo:exp
+{: RESULT = exp; :}
+|
+acceso_arreglo:exp
+{: RESULT = exp; :}
+;
+lista_argumentos_opc            ::=
+{: RESULT = new LinkedList<Expresion>(); 
+:}
+|
+lista_argumentos:lstArg
+{: RESULT = lstArg; :}
+;
+lista_argumentos   
+::=     expresion:exp
+{: RESULT = new LinkedList<Expresion>();
+RESULT.add(exp); :}
+|
+lista_argumentos:lstArg COMA 
+expresion:exp
+{: lstArg.add(exp);
+RESULT = lstArg; :}
+;
+invocacion_metodo               ::=     IDENTIFICADOR:id PARENI 
+lista_argumentos_opc:lstArg PAREND
+{: RESULT = new 
+ExpresionLlamadaSubrutina(id, lstArg);
+RESULT.linea = ((Token) 
+CUP$AnalizadorSintactico$stack.peek()).linea; :}
+;
+invocacio
+n_entrada              ::=     ENTRADA variables_entrada:lstVar
+{: RESULT = new 
+SentenciaLectura(lstVar); :}
+;
+
+variables_entrada               ::=     IDENTIFICADOR:id
+{: RESULT = new 
+LinkedList<ExpresionVariable>();
+ExpresionVariable exp = new 
+ExpresionVariable(id);
+exp.linea = ((Token) 
+CUP$AnalizadorSintactico
+$stack.peek()).linea;
+RESULT.add(exp); :}
+|       variables_entrada:lstVar COMA 
+IDENTIFICADOR:id
+{: ExpresionVariable exp = new 
+ExpresionVari
+able(id);
+exp.linea = ((Token) 
+CUP$AnalizadorSintactico$stack.peek()).linea;
+lstVar.add(exp);
+RESULT = lstVar; :}
+;
+invocacion_imprime              ::=     IMPRIME variables_imprime:lstExp
+{: RESULT = new 
+SentenciaEscritura(lstExp); :}
+;
+variables_imprime               ::=    
+variable_imprime:exp
+{: RESULT = new LinkedList<Expresion>();
+RESULT.add(exp); :}
+|       variables_imprime:lstExp COMA 
+variable_imprime:exp
+{: lstExp.add(exp);
+RESULT = lstExp; :}
+;
+variable_imprime                ::=     expresion:exp
+{: 
+RESULT = exp; :}
+|       NL:litTxt
+{: RESULT = new ExpresionTexto(litTxt);
+RESULT.linea = ((Token) 
+CUP$AnalizadorSintactico$stack.peek()).lin
+ea; :}
+;
+acceso_arreglo                  ::=     IDENTIFICADOR:id dimensiones_arreglo:dim
+{: RESULT = new 
+ExpresionVariableArreglo(id, dim);
+RESULT.linea = ((Token) 
+CUP$AnalizadorSintactico$stack.elementAt(CUP$AnalizadorSintactico$top
+-
+1)).linea; 
+:}
+;
+
+expresion_postfix               ::=     primario:pri
+{: RESULT = pri; :}
+|
+IDENTIFICADOR:id
+{: RESULT = new ExpresionVariable(id);
+RESULT.linea = ((Token) 
+CUP$AnalizadorSintactico$stack.peek()).linea; :}
+|       exp_postincremento:exp
+{: RESULT = exp; :}
+|       exp_postdecremento:exp
+{: RESULT = exp; :}
+;
+exp_postincremento              ::=     expresion_postfix:exp MASMAS
+{: RESULT = new ExpresionOpUnaria(exp, 
+Operador.MASMAS);
+RESULT.linea
+= ((Token) 
+CUP$AnalizadorSintactico$stack.peek()).linea; :}
+;
+exp_postdecremento              ::=     expresion_postfix:exp MENMEN
+{: RESULT = new ExpresionOpUnaria(exp, 
+Operador.MEN
+MEN);
+RESULT.linea = ((Token) 
+CUP$AnalizadorSintactico$stack.peek()).linea; :}
+;
+expresion_unaria                ::=     
+MAS expresion_unaria:exp
+{: RESULT = new ExpresionOpUnaria(exp, 
+Operador.MAS);
+RESULT.linea = exp.linea; :}
+|
+MEN expresion_unaria:exp
+{: RESULT = new Expresio
+nOpUnaria(exp, 
+Operador.MEN);
+RESULT.linea = exp.linea; :}
+|
+expresion_unaria_no_mas_menos:exp
+{: RESULT = exp; :}
+;
+expresion_unaria_no_mas_menos   ::=     expresion_postfix:exp
+{: RESULT = exp; :}
+|
+NO expresion_unaria:exp
+{: RESULT = new Expresion
+OpUnaria(exp, 
+Operador.NO);
+RESULT.linea = exp.linea; :}
+;
+expresion_multiplicativa        ::=     expresion_unaria:exp
+{: RESULT = exp; :}
+|
+expresion_multiplicativa:exp1 MUL 
+expresion_unaria:exp2
+{: RESULT = new ExpresionOpBinaria(exp1, 
+exp2, Operador.MUL);
+RESULT.linea = exp2.l
+inea; :}
+|
+expresion_multiplicativa:exp1 DIV 
+expresion_unaria:exp2
+{: RESULT = new ExpresionOpBinaria(exp1, 
+exp2, Operador.DIV);
+RESULT.linea
+= exp2.linea; :}
+|
+expresion_multiplicativa:exp1 MOD 
+expresion_unaria:exp2
+{: RESULT = new ExpresionOpBinaria(exp1, 
+exp2, Operador.MOD);
+RES
+ULT.linea = exp2.linea; :}
+;
+expresion_aditiva               ::=     expresion_multiplicativa:exp
+{: RESULT = exp; :}
+|
+expresion_aditiva:exp1 MAS 
+expr
+esion_multiplicativa:exp2
+{: RESULT = new ExpresionOpBinaria(exp1, 
+exp2, Operador.MAS);
+RESULT.linea = exp2.linea; :}
+|
+expresion_aditiva:exp
+1 MEN 
+expresion_multiplicativa:exp2
+{: RESULT = new ExpresionOpBinaria(exp1, 
+exp2, Operador.MEN);
+RESULT.linea = exp2.linea; :}
+|
+expresion_a
+ditiva:exp1 PUNTO 
+expresion_multiplicativa:exp2
+{: RESULT = new ExpresionOpBinaria(exp1, 
+exp2, Operador.PUNTO);
+RESULT.linea = exp2.linea; :}
+;
+expresion_relacional            ::=     expresion_aditiva:exp
+{: RESULT = exp; :}
+|
+expresion_relacional:exp1 MENQ 
+expresion_aditiva:exp2
+{:
+RESULT = new ExpresionOpBinaria(exp1, 
+exp2, Operador.MENQ);
+RESULT.linea = exp2.linea; :}
+|
+expresion_relacional:exp1 MAYQ 
+expresion_aditiva:exp2
+
+{: RESULT = new ExpresionOpBinaria(exp1, 
+exp2, Operador.MAYQ);
+RESULT.linea = exp2.linea; :}
+|
+expresion_relacional:exp1 MENQIGU 
+expresion_aditiva:exp2
+{: RESULT = new ExpresionOpBinaria(exp1, 
+exp2, Operador.MENQIGU);
+RESULT.linea = exp2.linea; :}
+|
+expresion_relacional:exp1 MAYQIGU 
+expresion_aditiva:exp2
+{: RESULT = new ExpresionOpBinaria(exp1, 
+exp2, Operador.MAYQIGU);
+RESULT.linea = exp2.linea; :}
+;
+expresion_igualdad              ::=     expresion_r
+elacional:exp
+{: RESULT = exp; :}
+|
+expresion_igualdad:exp1 IGUIGU 
+expresion_relacional:exp2
+{: RESULT = new ExpresionOpBinaria(exp1, 
+exp2, Oper
+ador.IGUIGU);
+RESULT.linea = exp2.linea; :}
+|
+expresion_igualdad:exp1 NOIGU 
+expresion_relacional:exp2
+{: RESULT = new ExpresionOpBinaria(exp1
+, 
+exp2, Operador.NOIGU);
+RESULT.linea = exp2.linea; :}
+;
+expresion_condicional_and       ::=     expresion_igualdad:exp
+{: RESULT = exp; :}
+|
+expresion_condicional_and:exp1 Y 
+expresion_igualdad:exp2
+{: RESULT = new ExpresionOpBinaria(exp1, 
+exp2, Operador.Y);
+RESULT.linea = exp2.li
+nea; :}
+;
+expresion_condicional_or        ::=     expresion_condicional_and:exp
+{: RESULT = exp; :}
+|
+expresion_condicional_or:exp1 O 
+expresion_condici
+onal_and:exp2
+{: RESULT = new ExpresionOpBinaria(exp1, 
+exp2, Operador.O);
+RESULT.linea = exp2.linea; :}
+;
+expresion_asignacion            ::
+=     expresion_condicional_or:exp
+
+
+{: RESULT = exp; :}
+;
+asignacion                      ::=
+lado_izquierdo:ladIzq 
+operador_asignacion:op expresion_asignacion:exp
+{: if (op.equals(Operador.IGU)) {
+RESULT = new 
+SentenciaAsignacion(ladIzq, exp);
+RESULT.linea = exp.linea;
+} else {
+ExpresionOpBinaria primExp = new 
+ExpresionOpBinaria(null, null, null);
+switch (op) {
+case MULI
+GU: primExp = new 
+ExpresionOpBinaria(ladIzq, exp, Operador.MUL); break;
+case DIVIGU: primExp = new 
+ExpresionOpBinaria(ladIzq, exp, Operador.DIV); break;
+c
+ase MODIGU: primExp = new 
+ExpresionOpBinaria(ladIzq, exp, Operador.MOD); break;
+case MASIGU: primExp = new 
+ExpresionOpBinaria(ladIzq, exp, Operador.MAS); break;
+case MENIGU: primExp = new 
+ExpresionOpBinaria(ladIzq, exp, Operador.MEN); break;
+}
+primExp.linea = exp.linea;
+RESULT = new 
+SentenciaAsignacion(ladIzq, primExp);
+RESULT.linea = exp.linea;
+}
+:}
+;
+lado_iz
+quierdo                  ::=     IDENTIFICADOR:id
+{: RESULT = new ExpresionVariable(id);
+RESULT.linea = ((Token) 
+CUP$AnalizadorSintactico$stack.peek()).linea; :}
+|
+acceso_arreglo:exp
+{: RESULT = exp; :}
+;
+operador_asignacion             ::=     IGU
+{: RESULT = Operador.IGU; :}
+|
+MULIGU
+{: RESULT = Operador.MULIGU; :}
+|
+DIVIGU
+{: RESULT = Operador.DIVIGU; :}
+|
+MO
+DIGU
+{: RESULT = Operador.MODIGU; :}
+
+
+|
+MASIGU
+{: RESULT = Operador.MASIGU; :}
+|
+MENIGU
+{: RESULT = Operador.MENIGU; :}
+;
+expresion                       ::=
+expresion_asignacion:exp
+{: RESULT = exp; :}
+|       error
+;
+expresion_constante             ::=     LITENTERO:litEnt
+{: RESULT = new 
+ExpresionEntero(litEnt.intValue());
+RESULT.linea = ((Token) 
+CUP$Analizad
+orSintactico$stack.peek()).linea; :}
+|       LITTEXTO:litTxt
+{: RESULT = new ExpresionTexto(litTxt);
+RESULT.linea = ((Token) 
+CUP$AnalizadorSi
+ntactico$stack.peek()).linea; :}
+;
